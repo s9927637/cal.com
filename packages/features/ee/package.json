@@ -16,6 +16,11 @@
     "twilio": "^3.80.1",
     "zod": "^3.22.4"
   },
+  "peerDependencies": {
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-hook-form": "^7.0.0"
+  },
   "devDependencies": {
     "@calcom/tsconfig": "*"
   }
