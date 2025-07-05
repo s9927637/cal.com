@@ -30,7 +30,7 @@ FROM node:18 AS runner
 WORKDIR /calcom
 
 COPY --from=builder /calcom .
-
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 ENV NODE_ENV=production
 EXPOSE 3000
 
