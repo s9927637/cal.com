@@ -17,7 +17,7 @@ ENV BUILD_STANDALONE=true
 
 COPY . .
 
-RUN npm install -g yarn && yarn set version berry
+RUN npm install -g yarn --force && yarn set version berry
 RUN yarn config set httpTimeout 1200000
 
 RUN yarn install
