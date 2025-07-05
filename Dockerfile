@@ -6,7 +6,7 @@ WORKDIR /app
 COPY . .
 
 # 啟用 corepack 並安裝依賴（immutable 確保 lockfile 不被修改）
-RUN corepack enable && yarn install --immutable
+RUN corepack enable && yarn install --immutable-cache
 
 # 建置 Cal.com
 RUN yarn build
