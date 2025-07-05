@@ -8,6 +8,7 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 
 # 安裝依賴
+RUN corepack enable && yarn install --frozen-lockfile
 RUN yarn install --frozen-lockfile
 
 # 複製所有程式碼
@@ -36,3 +37,5 @@ EXPOSE 3000
 
 # 啟動 Cal.com API 和 Web (next.js SSR)
 CMD ["yarn", "start"]
+
+
