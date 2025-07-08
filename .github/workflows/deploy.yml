@@ -20,9 +20,9 @@ jobs:
 
       - name: Install dependencies
         run: yarn install
-
-      - name: Build Web Only (Turbo)
-        run: npx turbo run build --filter=web...
+        
+      - name: Build All (Turbo)
+        run: npx turbo run build --filter=web^...
 
       - name: Trigger Zeabur deployment
         env:
