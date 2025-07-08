@@ -10,11 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Build
-        run: NODE_OPTIONS="--max_old_space_size=4096" yarn build
-    
       - name: Checkout code
         uses: actions/checkout@v3
+
+      - name: Enable Corepack (Yarn)
+        run: corepack enable
+
+      - name: Set Yarn version to match project
+        run: yarn set version berry
 
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
@@ -22,9 +25,11 @@ jobs:
           node-version: 18
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        
+        run: yarn install --immutable
+
       - name: Build All (Turbo)
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
         run: npx turbo run build --filter=web^...
 
       - name: Trigger Zeabur deployment
