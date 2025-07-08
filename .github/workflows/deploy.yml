@@ -22,7 +22,7 @@ jobs:
         run: yarn install
 
       - name: Build Web Only (Turbo)
-        run: npx turbo run build --filter=web
+        run: npx turbo run build --filter=web...
 
       - name: Trigger Zeabur deployment
         env:
