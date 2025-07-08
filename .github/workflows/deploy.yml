@@ -3,7 +3,7 @@ name: Build and Deploy to Zeabur
 on:
   push:
     branches:
-      - main  # 當你 push 到 main 分支時會觸發
+      - main
 
 jobs:
   build-deploy:
@@ -16,13 +16,13 @@ jobs:
       - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 18  # 你可以換成專案需要的 Node 版本
+          node-version: 18
 
       - name: Install dependencies
-        run: yarn install  # 或 npm install
+        run: yarn install
 
-      - name: Build project
-        run: yarn build    # 或你實際的 build 指令，如 npx turbo run build --filter=web
+      - name: Build Web Only (Turbo)
+        run: npx turbo run build --filter=web
 
       - name: Trigger Zeabur deployment
         env:
