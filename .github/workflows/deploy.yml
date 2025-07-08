@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: 18
 
+      - name: Install dependencies only for @calcom/web
+        run: yarn workspaces focus @calcom/web --production
+
       - name: Enable Corepack (for Yarn Berry)
         run: corepack enable
 
