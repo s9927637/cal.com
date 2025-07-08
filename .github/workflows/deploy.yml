@@ -1,47 +1,36 @@
-name: Build and Deploy Cal.com to Zeabur
+name: Build and Deploy to Zeabur
 
 on:
   push:
     branches:
-      - main
-
-env:
-  NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
-  NEXT_PUBLIC_WEBAPP_URL: ${{ secrets.NEXT_PUBLIC_WEBAPP_URL }}
-  NEXT_PUBLIC_WEBSITE_URL: ${{ secrets.NEXT_PUBLIC_WEBSITE_URL }}
-  NEXT_PUBLIC_SINGLE_ORG_SLUG: booker
-  NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-  NODE_OPTIONS: --max_old_space_size=4096
+      - main  # 當你 push 到 main 分支時會觸發
 
 jobs:
-  build:
+  build-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source
+      - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Setup Node
+      - name: Setup Node.js environment
         uses: actions/setup-node@v3
         with:
-          node-version: 18
-
-      - name: Cache node_modules
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.npm
-            .turbo
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+          node-version: 18  # 你可以換成專案需要的 Node 版本
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install  # 或 npm install
 
-      - name: Build Cal.com
-        run: npx turbo run build --filter=web
+      - name: Build project
+        run: yarn build    # 或你實際的 build 指令，如 npx turbo run build --filter=web
 
-      - name: Deploy to Zeabur
-        run: curl -X POST ${{ secrets.ZEABUR_DEPLOY_HOOK_URL }}
+      - name: Trigger Zeabur deployment
+        env:
+          ZEABUR_API_TOKEN: ${{ secrets.ZEABUR_API_TOKEN }}
+          ZEABUR_PROJECT_ID: ${{ secrets.ZEABUR_PROJECT_ID }}
+          ZEABUR_SERVICE_ID: ${{ secrets.ZEABUR_SERVICE_ID }}
+        run: |
+          curl -X POST "https://gateway.zeabur.com/api/deployments" \
+            -H "Authorization: Bearer $ZEABUR_API_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"projectId\":\"$ZEABUR_PROJECT_ID\",\"serviceId\":\"$ZEABUR_SERVICE_ID\"}"
