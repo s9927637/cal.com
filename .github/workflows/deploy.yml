@@ -17,24 +17,31 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
+          cache: 'yarn'
 
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-        
-      - name: Build All (Turbo)
+      - name: Install dependencies (Yarn 4)
+        run: |
+          corepack enable
+          yarn set version berry
+          yarn install --immutable
+
+      - name: Build Frontend Only with Memory Boost (Turbo)
+        env:
+          NODE_OPTIONS: --max_old_space_size=4096
         run: npx turbo run build --filter=web^...
 
-      - name: Trigger Zeabur deployment
+      - name: Trigger Zeabur Deployment
         env:
-           NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
-           DATABASE_URL: ${{ secrets.DATABASE_URL }}
-           NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
-           NEXT_PUBLIC_WEBAPP_URL: ${{ secrets.NEXT_PUBLIC_WEBAPP_URL }}
-           NEXT_PUBLIC_WEBSITE_URL: ${{ secrets.NEXT_PUBLIC_WEBSITE_URL }}
-           ZEABUR_API_TOKEN: ${{ secrets.ZEABUR_API_TOKEN }}
-           ZEABUR_PROJECT_ID: ${{ secrets.ZEABUR_PROJECT_ID }}
-           ZEABUR_SERVICE_ID: ${{ secrets.ZEABUR_SERVICE_ID }}
+          NEXTAUTH_SECRET: ${{ secrets.NEXTAUTH_SECRET }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          NEXTAUTH_URL: ${{ secrets.NEXTAUTH_URL }}
+          NEXT_PUBLIC_WEBAPP_URL: ${{ secrets.NEXT_PUBLIC_WEBAPP_URL }}
+          NEXT_PUBLIC_WEBSITE_URL: ${{ secrets.NEXT_PUBLIC_WEBSITE_URL }}
+          ZEABUR_API_TOKEN: ${{ secrets.ZEABUR_API_TOKEN }}
+          ZEABUR_PROJECT_ID: ${{ secrets.ZEABUR_PROJECT_ID }}
+          ZEABUR_SERVICE_ID: ${{ secrets.ZEABUR_SERVICE_ID }}
         run: |
+          echo "🚀 Triggering Zeabur Deployment..."
           curl -X POST "https://gateway.zeabur.com/api/deployments" \
             -H "Authorization: Bearer $ZEABUR_API_TOKEN" \
             -H "Content-Type: application/json" \
